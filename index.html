@@ -211,6 +211,12 @@ fieldset.q.missing { border-color: var(--coral); box-shadow: 0 0 0 2px var(--cor
 }
 body::after { content: ""; position: fixed; left: 0; right: 0; bottom: 0; height: min(36vh, 320px); background: url("waves.svg") center bottom / cover no-repeat; pointer-events: none; z-index: -1; }
 .wrap { padding-bottom: 140px; }
+.intro { margin-top: 18px; padding: 18px; border-radius: 14px; background: var(--surface); border: 2px solid var(--sun); display: grid; gap: 12px; }
+.intro p { margin: 0; }
+.intro .meta { display: grid; gap: 4px; font-size: 0.93rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
+.intro .meta b { color: var(--ink); }
+html[data-lang="both"] .intro .meta .si { display: inline; margin: 0; }
+html[data-lang="both"] .intro .meta .en + .si::before { content: " / "; }
 [hidden]{display:none!important}
 body{margin:0}
 </style>
@@ -233,6 +239,16 @@ body{margin:0}
   </header>
 
   <form id="form" novalidate>
+    <section class="intro" aria-label="About this study">
+      <p><span class="en">I am conducting this survey as part of my Master's degree in Information Systems Management (MISM) at the University of Colombo. This study is titled <b>"A Framework for an Intelligent Process Automation System to Improve the Performance of Fish Supply Chain Operations at Beruwala Port, Sri Lanka."</b></span><span class="si">මම කොළඹ විශ්වවිද්‍යාලයේ තොරතුරු පද්ධති කළමනාකරණය පිළිබඳ ශාස්ත්‍රපති උපාධිය (MISM) සඳහා කොටසක් ලෙස මෙම සමීක්ෂණය සිදු කරමි. මෙම අධ්‍යයනයේ මාතෘකාව <b>"ශ්‍රී ලංකාවේ බේරුවල වරායේ මත්ස්‍ය සැපයුම් දාම මෙහෙයුම්වල කාර්ය සාධනය වැඩිදියුණු කිරීම සඳහා බුද්ධිමත් ක්‍රියාවලි ස්වයංක්‍රීයකරණ පද්ධතියක් සඳහා රාමුවක්"</b> වේ.</span></p>
+      <p><span class="en">Your participation is voluntary, and the information you provide will be kept confidential and used only for academic research purposes. No names are collected. Please answer each question based on your own experience and opinion. The questionnaire will take approximately 10–15 minutes to complete.</span><span class="si">ඔබේ සහභාගිත්වය ස්වේච්ඡාවෙන් සිදු වන අතර, ඔබ සපයන තොරතුරු රහසිගතව තබා ගන්නා අතර අධ්‍යයන පර්යේෂණ කටයුතු සඳහා පමණක් භාවිත කෙරේ. නම් ඉල්ලා සිටින්නේ නැත. කරුණාකර ඔබේ අත්දැකීම් සහ අදහස් මත පදනම්ව සෑම ප්‍රශ්නයකටම පිළිතුරු දෙන්න. ප්‍රශ්නාවලිය සම්පූර්ණ කිරීමට මිනිත්තු 10–15 ක් පමණ ගත වේ.</span></p>
+      <p><span class="en">Thank you for your valuable time and participation.</span><span class="si">ඔබේ වටිනා කාලය සහ සහභාගිත්වය වෙනුවෙන් ස්තූතියි.</span></p>
+      <div class="meta">
+        <div><b><span class="en">Researcher:</span><span class="si">පර්යේෂක:</span></b> Madhuranga Rajapaksha</div>
+        <div><b><span class="en">Programme:</span><span class="si">වැඩසටහන:</span></b> <span class="en">Master's in Information Systems Management (MISM)</span><span class="si">තොරතුරු පද්ධති කළමනාකරණය පිළිබඳ ශාස්ත්‍රපති (MISM)</span></div>
+        <div><b><span class="en">University:</span><span class="si">විශ්වවිද්‍යාලය:</span></b> <span class="en">University of Colombo</span><span class="si">කොළඹ විශ්වවිද්‍යාලය</span></div>
+      </div>
+    </section>
     <div class="progress" aria-live="polite">
       <div class="row"><span id="progText">0 of 0 answered</span><span id="progPct">0%</span></div>
       <div class="bar"><i id="progBar"></i></div>
