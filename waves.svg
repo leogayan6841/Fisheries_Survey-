@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice">
+  <path d="M0 130 Q100 100 200 130 T400 130 T600 130 T800 130 T1000 130 T1200 130 V300 H0Z" fill="#1F6FC2" opacity="0.14"/>
+  <path d="M0 170 Q100 140 200 170 T400 170 T600 170 T800 170 T1000 170 T1200 170 V300 H0Z" fill="#0B8A9A" opacity="0.18"/>
+  <path d="M0 215 Q100 187 200 215 T400 215 T600 215 T800 215 T1000 215 T1200 215 V300 H0Z" fill="#1E9A68" opacity="0.18"/>
+  <path d="M0 255 Q100 232 200 255 T400 255 T600 255 T800 255 T1000 255 T1200 255 V300 H0Z" fill="#0B6670" opacity="0.28"/>
+  <g fill="#1F9D6B" opacity="0.4">
+    <path transform="translate(150,185)" d="M0 0 Q14 -10 32 0 Q14 10 0 0Z M32 0 L44 -9 L44 9Z"/>
+    <path transform="translate(205,200) scale(0.8)" d="M0 0 Q14 -10 32 0 Q14 10 0 0Z M32 0 L44 -9 L44 9Z"/>
+    <path transform="translate(120,212) scale(0.7)" d="M0 0 Q14 -10 32 0 Q14 10 0 0Z M32 0 L44 -9 L44 9Z"/>
+    <path transform="translate(980,170)" d="M0 0 Q14 -10 32 0 Q14 10 0 0Z M32 0 L44 -9 L44 9Z"/>
+    <path transform="translate(1040,188) scale(0.8)" d="M0 0 Q14 -10 32 0 Q14 10 0 0Z M32 0 L44 -9 L44 9Z"/>
+  </g>
+  <g>
+    <circle cx="880" cy="112" r="11" fill="#F5A623" opacity="0.8"/>
+    <rect x="876" y="120" width="8" height="18" fill="#C93A2D" opacity="0.6"/>
+  </g>
+</svg>

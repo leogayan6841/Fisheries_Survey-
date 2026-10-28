@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 220" preserveAspectRatio="xMaxYMax slice">
+  <circle cx="690" cy="66" r="56" fill="#F5A623" opacity="0.22"/>
+  <circle cx="690" cy="66" r="34" fill="#F5A623" opacity="0.92"/>
+  <path d="M330 150 Q400 112 465 140 T600 134 T800 138 V220 H330Z" fill="#FFFFFF" opacity="0.10"/>
+  <path d="M590 40 q8 -9 16 0 q8 -9 16 0" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <path d="M640 22 q6 -7 12 0 q6 -7 12 0" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" opacity="0.7"/>
+  <path d="M520 58 q5 -6 10 0 q5 -6 10 0" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <path d="M0 166 Q50 152 100 166 T200 166 T300 166 T400 166 T500 166 T600 166 T700 166 T800 166 V220 H0Z" fill="#FFFFFF" opacity="0.14"/>
+  <g transform="translate(430,138) scale(0.5)" opacity="0.8">
+    <path d="M0 24 L90 24 Q80 44 62 46 L22 46 Q6 40 0 24Z" fill="#05303A"/>
+    <path d="M45 24 V-30" stroke="#05303A" stroke-width="3"/>
+    <path d="M48 -28 L48 20 L84 20Z" fill="#FFFFFF"/>
+  </g>
+  <g transform="translate(520,112)">
+    <path d="M0 24 L96 24 Q86 46 66 48 L22 48 Q6 42 0 24Z" fill="#05303A" opacity="0.78"/>
+    <path d="M0 24 L96 24" stroke="#F5A623" stroke-width="3"/>
+    <rect x="58" y="6" width="22" height="18" rx="2" fill="#05303A" opacity="0.78"/>
+    <path d="M30 24 V-34" stroke="#05303A" stroke-width="3" opacity="0.78"/>
+    <path d="M33 -32 L33 20 L70 20Z" fill="#FFFFFF" opacity="0.9"/>
+  </g>
+  <g transform="translate(650,128) scale(0.72)">
+    <path d="M0 24 L90 24 Q80 44 62 46 L22 46 Q6 40 0 24Z" fill="#05303A" opacity="0.78"/>
+    <path d="M45 24 V-30" stroke="#05303A" stroke-width="3" opacity="0.78"/>
+    <path d="M48 -28 L48 20 L84 20Z" fill="#F5A623" opacity="0.95"/>
+  </g>
+  <path d="M0 186 Q50 173 100 186 T200 186 T300 186 T400 186 T500 186 T600 186 T700 186 T800 186 V220 H0Z" fill="#FFFFFF" opacity="0.2"/>
+  <path d="M0 200 Q60 190 120 200 T240 200 T360 200 T480 200 T600 200 T720 200 T840 200 V220 H0Z" fill="#05303A" opacity="0.22"/>
+  <g fill="#FFFFFF" opacity="0.5">
+    <path transform="translate(560,206)" d="M0 0 Q10 -7 22 0 Q10 7 0 0Z M22 0 L30 -6 L30 6Z"/>
+    <path transform="translate(600,210) scale(0.8)" d="M0 0 Q10 -7 22 0 Q10 7 0 0Z M22 0 L30 -6 L30 6Z"/>
+    <path transform="translate(700,205)" d="M0 0 Q10 -7 22 0 Q10 7 0 0Z M22 0 L30 -6 L30 6Z"/>
+  </g>
+</svg>

@@ -202,6 +202,15 @@ html[data-lang="both"] .part-head h2 .si { opacity: 0.92; }
 .done { border-width: 2px; border-color: var(--leaf); background: color-mix(in srgb, var(--leaf) 12%, var(--surface)); }
 fieldset.q.missing { border-color: var(--coral); box-shadow: 0 0 0 2px var(--coral); }
 @media (prefers-reduced-motion: reduce) { .pt:has(input:checked) { transform: none; } }
+/* ---- Background art: harbour scene in the banner, waves along the page bottom ---- */
+.top {
+  background:
+    url("banner.svg") right bottom / auto 100% no-repeat,
+    radial-gradient(circle at 80% 70%, rgba(255,255,255,0.12) 0 60px, transparent 61px),
+    linear-gradient(135deg, var(--hero1), var(--hero2));
+}
+body::after { content: ""; position: fixed; left: 0; right: 0; bottom: 0; height: min(36vh, 320px); background: url("waves.svg") center bottom / cover no-repeat; pointer-events: none; z-index: -1; }
+.wrap { padding-bottom: 140px; }
 [hidden]{display:none!important}
 body{margin:0}
 </style>
