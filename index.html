@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en" data-lang="both">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Beruwala Port Survey</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Noto+Sans+Sinhala:wght@400;500;600&family=Source+Sans+3:wght@400;500;600&display=swap">
+<style>
+/* Layout: one calm column like a clipboard form on the dock; sticky progress strip; question cards, Likert rows as five big tap targets. */
+:root {
+  --bg: #EDF2F1;
+  --surface: #FFFFFF;
+  --ink: #0F2A2E;
+  --muted: #4E666A;
+  --line: #CDDAD8;
+  --accent: #0B6670;
+  --on-accent: #FFFFFF;
+  --accent-soft: #DCEEEE;
+  --buoy: #C2410C;
+  --track: #D6E2E0;
+  --font-display: "Bricolage Grotesque", "Source Sans 3", system-ui, sans-serif;
+  --font-body: "Source Sans 3", "Noto Sans Sinhala", system-ui, sans-serif;
+  --font-si: "Noto Sans Sinhala", "Iskoola Pota", "Nirmala UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A1B1F; --surface: #112A2F; --ink: #E6F0EF; --muted: #9DB7B9; --line: #25454B;
+    --accent: #4FC3CC; --on-accent: #04262A; --accent-soft: #15383E; --buoy: #FF8A5C; --track: #21424A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A1B1F; --surface: #112A2F; --ink: #E6F0EF; --muted: #9DB7B9; --line: #25454B;
+  --accent: #4FC3CC; --on-accent: #04262A; --accent-soft: #15383E; --buoy: #FF8A5C; --track: #21424A;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.45;
+  padding-block: 0 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 10; }
+.wrap { max-width: 760px; margin: 0 auto; }
+.si { font-family: var(--font-si); }
+html[data-lang="en"] .si { display: none; }
+html[data-lang="si"] .en { display: none; }
+html[data-lang="both"] .si { display: block; color: var(--muted); font-size: 0.93em; margin-top: 2px; }
+html[data-lang="both"] .pair-inline .si { display: inline; margin-left: 6px; }
+h1, h2 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.7rem, 5.5vw, 2.3rem); line-height: 1.12; }
+html[data-lang="both"] h1 .si { font-size: 0.62em; font-weight: 600; margin-top: 6px; color: var(--ink); }
+h2 { font-size: 1.3rem; line-height: 1.2; }
+.top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 28px; }
+.top > div { min-width: 0; }
+.kicker { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+.lede { margin: 12px 0 0; color: var(--muted); max-width: 60ch; }
+.tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.seg button { font: inherit; font-size: 0.9rem; padding: 8px 12px; border: 0; background: transparent; color: var(--ink); cursor: pointer; min-height: 40px; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.linkbtn { font: inherit; font-size: 0.9rem; min-height: 40px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); cursor: pointer; }
+button:focus-visible, label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.progress { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding: 12px 0 10px; margin-top: 18px; }
+.progress .row { display: flex; justify-content: space-between; gap: 12px; font-size: 0.88rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar { height: 8px; border-radius: 4px; background: var(--track); margin-top: 6px; overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.25s ease; }
+@media (prefers-reduced-motion: reduce) { .bar > i { transition: none; } }
+
+.part { margin-top: 28px; display: flex; flex-direction: column; gap: 14px; }
+.part-head { display: flex; flex-direction: column; gap: 2px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); }
+.part-head .kicker { margin: 0; }
+fieldset.q { margin: 0; min-width: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 16px; }
+fieldset.q.missing { border-color: var(--buoy); box-shadow: 0 0 0 1px var(--buoy); }
+fieldset.q[hidden] { display: none; }
+legend { padding: 0 6px; margin-left: -6px; max-width: 100%; font-weight: 600; }
+.qnum { display: inline-block; min-width: 2.2em; color: var(--accent); font-variant-numeric: tabular-nums; }
+.stmt { font-weight: 500; }
+.stmt-text { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
+.stmt-text .n { flex: none; width: 2.2em; color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; padding-top: 1px; }
+.stmt-text > div { min-width: 0; }
+.opts { display: grid; gap: 8px; margin-top: 10px; }
+.opt { position: relative; display: block; border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; cursor: pointer; min-height: 48px; }
+.opt input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.opt:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.opt .lab { font-weight: 500; }
+.scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.pt { position: relative; display: flex; align-items: center; justify-content: center; min-height: 48px; border: 1px solid var(--line); border-radius: 10px; font-weight: 600; font-size: 1.05rem; cursor: pointer; font-variant-numeric: tabular-nums; }
+.pt input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.pt:has(input:checked) { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.ends { display: flex; justify-content: space-between; gap: 12px; margin-top: 6px; font-size: 0.78rem; color: var(--muted); }
+.ends > span { min-width: 0; }
+.ends > span:last-child { text-align: right; }
+html[data-lang="both"] .ends .si { margin-top: 0; font-size: 1em; }
+.legend { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 14px 16px; display: grid; gap: 6px; font-size: 0.95rem; }
+.legend div { display: flex; gap: 10px; }
+.legend b { flex: none; width: 1.4em; color: var(--accent); font-variant-numeric: tabular-nums; }
+.legend span { min-width: 0; }
+.note { color: var(--muted); font-size: 0.9rem; }
+
+.submit { margin-top: 26px; display: flex; flex-direction: column; gap: 12px; }
+.primary { font: inherit; font-weight: 600; font-size: 1.05rem; min-height: 52px; padding: 12px 20px; border-radius: 12px; border: 0; background: var(--accent); color: var(--on-accent); cursor: pointer; }
+.primary[disabled] { opacity: 0.6; cursor: default; }
+.msg { border-radius: 10px; padding: 12px 14px; border: 1px solid var(--buoy); color: var(--ink); background: var(--surface); }
+.msg[hidden] { display: none; }
+.done { margin-top: 40px; padding: 28px 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); display: flex; flex-direction: column; gap: 14px; }
+.done[hidden], #form[hidden], #results[hidden] { display: none; }
+
+.stats { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+.stat { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 12px 16px; min-width: 130px; }
+.stat b { display: block; font-family: var(--font-display); font-size: 1.8rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 0.85rem; color: var(--muted); }
+.tablewrap { overflow-x: auto; margin-top: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+td.num { text-align: right; white-space: nowrap; }
+.dist { display: flex; height: 10px; border-radius: 3px; overflow: hidden; min-width: 110px; background: var(--track); }
+.dist i { display: block; height: 100%; }
+.d1 { background: #B4531F; } .d2 { background: #D9915F; } .d3 { background: #A9B9B7; } .d4 { background: #5AAFB6; } .d5 { background: #0B6670; }
+:root[data-theme="dark"] .d5 { background: #4FC3CC; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .d5 { background: #4FC3CC; } }
+.rolebars { display: grid; gap: 6px; margin-top: 14px; }
+.rolebars div { display: grid; grid-template-columns: minmax(0, 11em) 1fr 2.5em; gap: 10px; align-items: center; font-size: 0.92rem; }
+.rolebars i { display: block; height: 10px; background: var(--accent); border-radius: 3px; }
+.rolebars b { text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 460px) { .rolebars div { grid-template-columns: 1fr 1fr 2em; } body { font-size: 16px; } }
+[hidden]{display:none!important}
+body{margin:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="kicker"><span class="en">Research questionnaire</span><span class="si">පර්යේෂණ ප්‍රශ්නාවලිය</span></div>
+      <h1><span class="en">Beruwala Port</span><span class="si">බේරුවල වරාය</span></h1>
+      <p class="lede"><span class="en">For fishermen, fish buyers, suppliers and port authority staff. No name is asked for. Choose one answer for each question.</span><span class="si">ධීවරයන්, මත්ස්‍ය මිල දී ගන්නන්, සැපයුම්කරුවන් සහ වරාය පරිපාලන කාර්ය මණ්ඩලය සඳහා. නමක් අසන්නේ නැත. එක් එක් ප්‍රශ්නයට එක් පිළිතුරක් තෝරන්න.</span></p>
+    </div>
+    <div class="tools">
+      <div class="seg" role="group" aria-label="Language / භාෂාව">
+        <button type="button" data-set="both" aria-pressed="true">EN + සිං</button>
+        <button type="button" data-set="en" aria-pressed="false">English</button>
+        <button type="button" data-set="si" aria-pressed="false" style="font-family:var(--font-si)">සිංහල</button>
+      </div>
+    </div>
+  </header>
+
+  <form id="form" novalidate>
+    <div class="progress" aria-live="polite">
+      <div class="row"><span id="progText">0 of 0 answered</span><span id="progPct">0%</span></div>
+      <div class="bar"><i id="progBar"></i></div>
+    </div>
+
+    <section class="part" id="part1">
+      <div class="part-head">
+        <div class="kicker"><span class="en">Part I</span><span class="si">I කොටස</span></div>
+        <h2><span class="en">Demographic and background profile</span><span class="si">ජන විකාශන සහ පසුබිම් තොරතුරු</span></h2>
+      </div>
+    </section>
+
+    <section class="part" id="part2">
+      <div class="part-head">
+        <div class="kicker"><span class="en">Part II</span><span class="si">II කොටස</span></div>
+        <h2><span class="en">Research statements</span><span class="si">පර්යේෂණ ප්‍රකාශ</span></h2>
+      </div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <div class="submit">
+      <div class="msg" id="err" role="alert" hidden></div>
+      <button type="submit" class="primary" id="submitBtn"><span class="en">Submit my answers</span><span class="si">මගේ පිළිතුරු යවන්න</span></button>
+    </div>
+  </form>
+
+  <section class="done" id="done" hidden>
+    <h2><span class="en">Thank you. Your response is saved.</span><span class="si">ස්තූතියි. ඔබේ ප්‍රතිචාරය සටහන් කරන ලදී.</span></h2>
+    <button type="button" class="primary" id="again"><span class="en">Start a new response</span><span class="si">නව ප්‍රතිචාරයක් ආරම්භ කරන්න</span></button>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+  // Paste the Web app URL from Google Apps Script here (see README.md).
+  var ENDPOINT = "PASTE_APPS_SCRIPT_URL_HERE";
+  // ---------- Survey content (edit Sinhala wording here) ----------
+  var P1 = [
+    { id: "role", en: "What is your primary role at Beruwala Port?", si: "බේරුවල වරායේ ඔබේ ප්‍රධාන භූමිකාව කුමක්ද?", opts: [
+      ["fisherman", "Fisherman", "ධීවරයා"], ["buyer", "Fish Buyer", "මත්ස්‍ය මිල දී ගන්නා"],
+      ["supplier", "Supplier (Ice, Fuel, Gear)", "සැපයුම්කරු (අයිස්, ඉන්ධන, ධීවර උපකරණ)"], ["authority", "Port Authority", "වරාය පරිපාලන කාර්ය මණ්ඩලය"] ] },
+    { id: "age", en: "What is your age group?", si: "ඔබේ වයස් කාණ්ඩය කුමක්ද?", opts: [
+      ["u25", "Under 25 years", "අවුරුදු 25 ට අඩු"], ["25-35", "25–35 years", "අවුරුදු 25–35"],
+      ["36-50", "36–50 years", "අවුරුදු 36–50"], ["50+", "Above 50 years", "අවුරුදු 50 ට වැඩි"] ] },
+    { id: "edu", en: "What is your highest level of education completed?", si: "ඔබ සම්පූර්ණ කර ඇති ඉහළම අධ්‍යාපන මට්ටම කුමක්ද?", opts: [
+      ["primary", "Primary Education", "ප්‍රාථමික අධ්‍යාපනය"], ["secondary", "Secondary Education (O/L or A/L)", "ද්විතීයික අධ්‍යාපනය (සාමාන්‍ය පෙළ හෝ උසස් පෙළ)"],
+      ["vocational", "Vocational / Technical Diploma", "වෘත්තීය / තාක්ෂණික ඩිප්ලෝමාව"], ["degree", "University Degree", "විශ්වවිද්‍යාල උපාධිය"] ] },
+    { id: "years", en: "How many years have you been involved in operations at Beruwala Port?", si: "ඔබ බේරුවල වරායේ මෙහෙයුම් වලට සම්බන්ධ වී කොපමණ කාලයක් වෙනවාද?", opts: [
+      ["<2", "Less than 2 years", "අවුරුදු 2 ට අඩු"], ["2-5", "2–5 years", "අවුරුදු 2–5"],
+      ["6-10", "6–10 years", "අවුරුදු 6–10"], [">10", "More than 10 years", "අවුරුදු 10 ට වැඩි"] ] },
+    { id: "digital", en: "What is your digital literacy level?", si: "ඔබේ ඩිජිටල් සාක්ෂරතා මට්ටම කුමක්ද?", opts: [
+      ["assist", "Require complete assistance from others to operate devices", "උපාංග භාවිත කිරීමට අන් අයගේ සම්පූර්ණ සහාය අවශ්‍යයි"],
+      ["basic", "Can independently place calls and send basic text messages using mobile phone", "ජංගම දුරකථනයෙන් ස්වාධීනව ඇමතුම් ගැනීමට සහ මූලික කෙටි පණිවිඩ යැවීමට හැක"],
+      ["apps", "Can navigate mobile applications and operating new software/systems independently", "ජංගම යෙදුම් සහ නව මෘදුකාංග/පද්ධති ස්වාධීනව භාවිත කිරීමට හැක"] ] },
+    { id: "vessel", en: "If you operate or own a fishing vessel, what is your vessel size category?", si: "ඔබ ධීවර යාත්‍රාවක් ක්‍රියාත්මක කරන්නේ නම් හෝ හිමිකම් දරන්නේ නම්, ඔබේ යාත්‍රාවේ ප්‍රමාණ කාණ්ඩය කුමක්ද?", opts: [
+      ["day", "Day boats under 34 ft", "අඩි 34 ට අඩු එදිනම ආපසු එන බෝට්ටු"], ["multi-med", "Multi-day boats 34–45 ft", "අඩි 34–45 බහු දින බෝට්ටු"],
+      ["multi-large", "Multi-day boats over 45 ft", "අඩි 45 ට වැඩි බහු දින බෝට්ටු"],
+      ["na", "Not Applicable (Buyer / Supplier / Port Staff)", "අදාළ නොවේ (මිල දී ගන්නා / සැපයුම්කරු / වරාය කාර්ය මණ්ඩලය)"] ] }
+  ];
+  var OPS = [["No", "නැත"], ["Under 10 operations", "මෙහෙයුම් 10 ට අඩු"], ["10–30 operations", "මෙහෙයුම් 10–30 අතර"], ["Above 30 operations", "මෙහෙයුම් 30 ට වැඩි"]];
+  function opsOpts() { return OPS.map(function (o, i) { return [["none", "u10", "10-30", "30+"][i], o[0], o[1]]; }); }
+  var P1B = [
+    { id: "ops_small", staff: true, en: "If you are working on port staff, how many daily small-scale (day boats under 34 ft) operational activities are completed at the port?", si: "ඔබ වරාය කාර්ය මණ්ඩලයේ සේවය කරන්නේ නම්, වරාය තුළ දිනකට කුඩා ප්‍රමාණයේ (අඩි 34 ට අඩු එදිනම ආපසු එන බෝට්ටු) මෙහෙයුම් ක්‍රියාකාරකම් කොපමණ සංඛ්‍යාවක් සිදු වේද?", opts: opsOpts() },
+    { id: "ops_medium", staff: true, en: "If you are working on port staff, how many daily medium-scale (multi-day boats 34–45 ft) operational activities are completed at the port?", si: "ඔබ වරාය කාර්ය මණ්ඩලයේ සේවය කරන්නේ නම්, වරාය තුළ දිනකට මධ්‍යම ප්‍රමාණයේ (අඩි 34–45 බහු දින බෝට්ටු) මෙහෙයුම් ක්‍රියාකාරකම් කොපමණ සංඛ්‍යාවක් සිදු වේද?", opts: opsOpts() },
+    { id: "ops_large", staff: true, en: "If you are working on port staff, how many daily large-scale (multi-day boats over 45 ft) operational activities are completed at the port?", si: "ඔබ වරාය කාර්ය මණ්ඩලයේ සේවය කරන්නේ නම්, වරාය තුළ දිනකට විශාල ප්‍රමාණයේ (අඩි 45 ට වැඩි බහු දින බෝට්ටු) මෙහෙයුම් ක්‍රියාකාරකම් කොපමණ සංඛ්‍යාවක් සිදු වේද?", opts: opsOpts() }
+  ];
+  var ALLP1 = P1.concat(P1B);
+  var SCALE = [["Strongly Disagree", "තරයේ එකඟ නොවේ"], ["Disagree", "එකඟ නොවේ"], ["Neutral", "මධ්‍යස්ථයි"], ["Agree", "එකඟ වේ"], ["Strongly Agree", "තරයේ එකඟ වේ"]];
+  var S = [
+    ["The current tools at Beruwala Port adequately support daily fish landing activities.", "බේරුවල වරායේ දැනට පවතින මෙවලම් දෛනික මත්ස්‍ය ගොඩබෑම් ක්‍රියාකාරකම් සඳහා ප්‍රමාණවත් ලෙස සහාය වේ."],
+    ["Existing physical weighbridges provide reliable weight measurements.", "දැනට පවතින බර කිරන පාලම් විශ්වාසදායක බර මිනුම් ලබා දේ."],
+    ["Traditional paper records provide reliable operational information.", "සාම්ප්‍රදායික කඩදාසි වාර්තා විශ්වාසදායක මෙහෙයුම් තොරතුරු ලබා දේ."],
+    ["Current traditional port infrastructure handles peak harvest volumes effectively.", "දැනට පවතින සාම්ප්‍රදායික වරාය යටිතල පහසුකම් උපරිම අස්වනු පරිමාව සාර්ථකව කළමනාකරණය කරයි."],
+    ["Communication methods between fishermen and buyers are well-established.", "ධීවරයන් සහ මිල දී ගන්නන් අතර සන්නිවේදන ක්‍රම හොඳින් ස්ථාපිත වී ඇත."],
+    ["Communication methods between port authorities and stakeholders are functional.", "වරාය අධිකාරිය සහ පාර්ශවකරුවන් අතර සන්නිවේදන ක්‍රම සාර්ථකව ක්‍රියාත්මක වේ."],
+    ["Paperwork during vessel arrival is processed quickly and efficiently.", "යාත්‍රා පැමිණීමේදී ලේඛන කටයුතු ඉක්මනින් සහ කාර්යක්ෂමව සිදු කෙරේ."],
+    ["Vessel departure clearance procedures are completed in a timely manner.", "යාත්‍රා පිටත්ව යාමේ අවසර ලබා ගැනීමේ ක්‍රියාපටිපාටි නියමිත වේලාවට අවසන් කෙරේ."],
+    ["Real-time fish price information is easily accessible to ensure fair trading.", "සාධාරණ වෙළඳාමක් සහතික කිරීම සඳහා තත්කාලීන මත්ස්‍ය මිල ගණන් පහසුවෙන් ලබා ගත හැක."],
+    ["Accurate real-time catch volume data is transparently available to avoid disputes.", "ආරවුල් වළක්වා ගැනීම සඳහා තත්කාලීන ඇල්ලූ ප්‍රමාණය පිළිබඳ නිවැරදි තොරතුරු විනිවිදභාවයෙන් ලබා ගත හැක."],
+    ["Fish cold-chain temperature is properly maintained while waiting at the dock.", "තොටුපළ අසල රැඳී සිටින අතරතුර මත්ස්‍යයන්ගේ ශීතල දාමයේ උෂ්ණත්වය නිසි ලෙස පවත්වා ගැනේ."],
+    ["Physical fish freshness and quality standards are preserved during harbour handling.", "වරාය තුළ මෙහෙයුම් අතරතුර මත්ස්‍යයන්ගේ නැවුම්බව සහ භෞතික ගුණාත්මක තත්ත්වය ආරක්ෂා වේ."],
+    ["Operations within the harbour stalls and dock area run smoothly without congestion.", "වරාය කුටි සහ තොටුපළ අසල මෙහෙයුම් තදබදයකින් තොරව සුමටව සිදු වේ."],
+    ["Payment tracking and transaction logging are completed accurately without errors.", "ගෙවීම් පරීක්ෂා කිරීම සහ ගනුදෙනු සටහන් කිරීම දෝෂවලින් තොරව නිවැරදිව සිදු කෙරේ."],
+    ["Current cooperative relationships among fishermen help resolve operational disputes.", "ධීවරයන් අතර පවතින සහයෝගිතා සබඳතා මෙහෙයුම් ආරවුල් විසඳා ගැනීමට උපකාරී වේ."],
+    ["Traditional fish sorting methods adequately protect product standards.", "සාම්ප්‍රදායික මත්ස්‍ය වර්ග කිරීමේ ක්‍රම නිෂ්පාදන ප්‍රමිතීන් ප්‍රමාණවත් ලෙස ආරක්ෂා කරයි."],
+    ["Traditional quality inspection methods adequately protect product standards.", "සාම්ප්‍රදායික ගුණාත්මක පරීක්ෂා ක්‍රම නිෂ්පාදන ප්‍රමිතීන් ප්‍රමාණවත් ලෙස ආරක්ෂා කරයි."],
+    ["Current safety protocols are strictly followed by harbor workers.", "වරාය සේවකයන් විසින් වත්මන් ආරක්ෂක ප්‍රොටොකෝල දැඩි ලෙස අනුගමනය කරයි."],
+    ["Existing credit arrangements maintain financial flow across the supply chain.", "දැනට පවතින ණය පහසුකම් සැපයුම් දාමය පුරා මූල්‍ය ගලනය පවත්වා ගනී."],
+    ["Automated digital scales would increase weight recording accuracy.", "ස්වයංක්‍රීය ඩිජිටල් තරාදි මගින් බර සටහන් කිරීමේ නිරවද්‍යතාව වැඩි වේ."],
+    ["Automatic sensor logging would improve environmental catch data accuracy.", "ස්වයංක්‍රීය සංවේදක (sensor) සටහන් මගින් පාරිසරික ඇල්ලීම් දත්තවල නිරවද්‍යතාව වැඩි දියුණු වේ."],
+    ["Secure digital databases would protect trade history from unauthorized changes.", "ආරක්ෂිත ඩිජිටල් දත්ත ගබඩා මගින් වෙළඳ ඉතිහාසය අනවසර වෙනස්කිරීම් වලින් ආරක්ෂා කරයි."],
+    ["Real-time data synchronization between the dock and administrative offices would streamline port workflow.", "තොටුපළ සහ පරිපාලන කාර්යාල අතර තත්කාලීන දත්ත සමමුහුර්ත කිරීම වරාය කාර්ය ප්‍රවාහය වඩාත් සරල කරයි."],
+    ["Automated system alerts via mobile devices would keep stakeholders updated on vessel arrivals.", "ජංගම උපාංග හරහා ලැබෙන ස්වයංක්‍රීය ඇඟවීම් මගින් යාත්‍රා පැමිණීම් පිළිබඳව පාර්ශවකරුවන් යාවත්කාලීනව සිටී."],
+    ["Cloud-based port management software would prevent data loss during harbor operations.", "වලාකුළු (Cloud) පාදක වරාය කළමනාකරණ මෘදුකාංග මගින් වරාය මෙහෙයුම් අතරතුර දත්ත නැතිවීම වළක්වයි."],
+    ["Automating landing clearance paperwork would shorten vessel turnaround times.", "ගොඩබෑමේ අවසර ලේඛන ස්වයංක්‍රීය කිරීම යාත්‍රා වරාය තුළ ගත කරන කාලය කෙටි කරයි."],
+    ["Automating auction paperwork would shorten trade settlement times.", "වෙන්දේසි ලේඛන කටයුතු ස්වයංක්‍රීය කිරීම ගනුදෙනු නිරවුල් කිරීමේ කාලය කෙටි කරයි."],
+    ["Standardized digital procedures for fish grading would make trade fairer.", "මත්ස්‍ය ශ්‍රේණිගත කිරීම සඳහා සම්මත ඩිජිටල් ක්‍රියාපටිපාටි මගින් වෙළඳාම වඩාත් සාධාරණ වේ."],
+    ["Real-time tracking of dock availability would improve vessel docking schedules.", "තොටුපළ ඉඩකඩ තත්කාලීනව නිරීක්ෂණය කිරීම යාත්‍රා නැංගුරම් ලැබීමේ කාලසටහන් වැඩි දියුණු කරයි."],
+    ["Electronic payment systems would eliminate cash-handling delays.", "ඉලෙක්ට්‍රොනික ගෙවීම් පද්ධති මගින් මුදල් හැසිරවීමේ ප්‍රමාදයන් ඉවත් කරයි."],
+    ["Standardized digital queue management would reduce harbor dock congestion.", "සම්මත ඩිජිටල් පෝලිම් කළමනාකරණය තොටුපළ අසල තදබදය අඩු කරයි."],
+    ["Simple visual interfaces on digital terminals would be easy for port users to operate.", "ඩිජිටල් ටර්මිනල්වල සරල දෘශ්‍ය අතුරුමුහුණත් වරාය භාවිතකරුවන්ට භාවිත කිරීමට පහසු වේ."],
+    ["Port stakeholders possess sufficient basic digital literacy to adapt to automated tools.", "වරාය පාර්ශවකරුවන්ට ස්වයංක්‍රීය මෙවලම් වලට හැඩගැසීමට ප්‍රමාණවත් මූලික ඩිජිටල් සාක්ෂරතාවක් ඇත."],
+    ["Adequate technical support at the port would make users confident in adopting new technology.", "වරායේ ප්‍රමාණවත් තාක්ෂණික සහාය තිබීම නව තාක්ෂණය භාවිත කිරීමට භාවිතකරුවන්ට විශ්වාසය ලබා දෙයි."],
+    ["Replacing manual paper routines with automated systems would reduce daily operational stress.", "අතින් කරන කඩදාසි කටයුතු වෙනුවට ස්වයංක්‍රීය පද්ධති යෙදීම දෛනික මෙහෙයුම් ආතතිය අඩු කරයි."],
+    ["Stakeholders are willing to transition to a digital port automation system.", "පාර්ශවකරුවන් ඩිජිටල් වරාය ස්වයංක්‍රීයකරණ පද්ධතියකට මාරු වීමට කැමැත්තෙන් සිටිති."],
+    ["Implementing process automation will noticeably reduce vessel unloading times.", "ක්‍රියාවලි ස්වයංක්‍රීයකරණය ක්‍රියාත්මක කිරීමෙන් යාත්‍රාවලින් මත්ස්‍ය බෑමේ කාලය කැපී පෙනෙන ලෙස අඩු වේ."],
+    ["Implementing process automation will noticeably reduce harbor clearance times.", "ක්‍රියාවලි ස්වයංක්‍රීයකරණය ක්‍රියාත්මක කිරීමෙන් වරාය අවසර ලබා ගැනීමේ කාලය කැපී පෙනෙන ලෙස අඩු වේ."],
+    ["Automated auctioning will speed up transaction completion for buyers.", "ස්වයංක්‍රීය වෙන්දේසිය මිල දී ගන්නන්ගේ ගනුදෙනු සම්පූර්ණ කිරීම වේගවත් කරයි."],
+    ["Automated billing will speed up financial settlement for suppliers.", "ස්වයංක්‍රීය බිල්පත් කිරීම සැපයුම්කරුවන්ගේ මූල්‍ය නිරවුල් කිරීම වේගවත් කරයි."],
+    ["Fast digital processing will reduce vessel wait times at the dock.", "වේගවත් ඩිජිටල් සැකසුම් යාත්‍රාවලට තොටුපළ අසල රැඳී සිටීමට සිදුවන කාලය අඩු කරයි."],
+    ["Faster automated handling will minimize fish exposure to ambient heat.", "වේගවත් ස්වයංක්‍රීය හැසිරවීම මත්ස්‍යයන් පරිසර තාපයට නිරාවරණය වීම අවම කරයි."],
+    ["Faster handling will reduce post-harvest fish spoilage rates.", "වේගවත් හැසිරවීම අස්වනු නෙලීමෙන් පසු මත්ස්‍ය හානි (නරක් වීමේ) අනුපාතය අඩු කරයි."],
+    ["Continuous automated temperature monitoring in storage will maintain fish freshness.", "ගබඩාවල උෂ්ණත්වය නිරන්තරයෙන් ස්වයංක්‍රීයව නිරීක්ෂණය කිරීම මත්ස්‍යයන්ගේ නැවුම්බව ආරක්ෂා කරයි."],
+    ["Reduced physical handling during clearance will preserve the market value of the catch.", "නිෂ්කාශන අතරතුර අතින් හැසිරවීම අඩු කිරීම ඇල්ලූ මත්ස්‍යයන්ගේ වෙළඳපල වටිනාකම ආරක්ෂා කරයි."],
+    ["Real-time visibility of daily fish landing volumes will benefit all stakeholders equally.", "දෛනික මත්ස්‍ය ගොඩබෑම් පරිමාව තත්කාලීනව දැකගත හැකි වීම සියලු පාර්ශවකරුවන්ට සමානව ප්‍රයෝජනවත් වේ."],
+    ["Real-time visibility of market prices will benefit all stakeholders equally.", "වෙළඳපල මිල ගණන් තත්කාලීනව දැකගත හැකි වීම සියලු පාර්ශවකරුවන්ට සමානව ප්‍රයෝජනවත් වේ."],
+    ["Digital transaction receipts will increase trade trust between fishermen and buyers.", "ඩිජිටල් ගනුදෙනු රිසිට්පත් ධීවරයන් සහ මිල දී ගන්නන් අතර වෙළඳ විශ්වාසය වැඩි කරයි."],
+    ["Full digital traceability of fish catch from landing to dispatch will improve transaction transparency.", "ගොඩබෑමේ සිට බෙදා හැරීම දක්වා මත්ස්‍ය ඇල්ලීම් සම්පූර්ණ ඩිජිටල් ලෙස සොයාගත හැකි වීම ගනුදෙනුවල විනිවිදභාවය වැඩි කරයි."]
+  ];
+
+  // ---------- Helpers ----------
+  var $ = function (id) { return document.getElementById(id); };
+  function bi(en, si) { return '<span class="en">' + en + '</span><span class="si">' + si + '</span>'; }
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  var answers = {};
+  var uiLang = "both";
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---------- Render ----------
+  function renderQuestion(q, num) {
+    var f = document.createElement("fieldset");
+    f.className = "q"; f.id = "q-" + q.id; f.setAttribute("data-q", q.id);
+    var h = '<legend><span class="qnum">' + num + '.</span>' + bi(q.en, q.si) + '</legend><div class="opts">';
+    q.opts.forEach(function (o, i) {
+      var id = q.id + "-" + i;
+      h += '<label class="opt" for="' + id + '"><input type="radio" id="' + id + '" name="' + q.id + '" value="' + o[0] + '"><span class="lab">' + bi(o[1], o[2]) + '</span></label>';
+    });
+    f.innerHTML = h + "</div>";
+    if (q.staff) f.hidden = true;
+    return f;
+  }
+  function renderStatement(s, i) {
+    var key = "s" + pad(i + 1);
+    var f = document.createElement("fieldset");
+    f.className = "q"; f.id = "q-" + key; f.setAttribute("data-q", key);
+    var h = '<legend class="stmt-text" style="padding:0;margin:0 0 12px"><span class="n">' + pad(i + 1) + '</span><div class="stmt">' + bi(s[0], s[1]) + "</div></legend>";
+    h += '<div class="scale">';
+    for (var v = 1; v <= 5; v++) {
+      var id = key + "-" + v;
+      h += '<label class="pt" for="' + id + '" title="' + SCALE[v - 1][0] + '"><input type="radio" id="' + id + '" name="' + key + '" value="' + v + '" aria-label="' + v + " – " + SCALE[v - 1][0] + '">' + v + "</label>";
+    }
+    h += '</div><div class="ends"><span>' + bi("1 " + SCALE[0][0], "1 " + SCALE[0][1]) + "</span><span>" + bi("5 " + SCALE[4][0], "5 " + SCALE[4][1]) + "</span></div>";
+    f.innerHTML = h;
+    return f;
+  }
+  (function build() {
+    var p1 = $("part1");
+    var n = 0;
+    P1.forEach(function (q) { n++; p1.appendChild(renderQuestion(q, n)); });
+    var staffNote = document.createElement("p");
+    staffNote.className = "note"; staffNote.id = "staffNote"; staffNote.hidden = true;
+    staffNote.innerHTML = bi("The next three questions are for port staff only.", "ඊළඟ ප්‍රශ්න තුන වරාය කාර්ය මණ්ඩලයට පමණක් අදාළ වේ.");
+    p1.appendChild(staffNote);
+    P1B.forEach(function (q) { n++; p1.appendChild(renderQuestion(q, n)); });
+    var p2 = $("part2");
+    var lg = $("legend");
+    lg.innerHTML = '<div class="note" style="display:block">' + bi("Choose how much you agree with each statement.", "එක් එක් ප්‍රකාශයට ඔබ කොපමණ එකඟ වේදැයි තෝරන්න.") + "</div>" +
+      SCALE.map(function (s, i) { return "<div><b>" + (i + 1) + "</b><span>" + bi(s[0], s[1]) + "</span></div>"; }).join("");
+    S.forEach(function (s, i) { p2.appendChild(renderStatement(s, i)); });
+  })();
+
+  // ---------- State, progress ----------
+  var isStaff = function () { return answers.role === "authority"; };
+  function requiredIds() {
+    var ids = P1.map(function (q) { return q.id; });
+    if (isStaff()) ids = ids.concat(P1B.map(function (q) { return q.id; }));
+    for (var i = 1; i <= S.length; i++) ids.push("s" + pad(i));
+    return ids;
+  }
+  function updateStaffVisibility() {
+    P1B.forEach(function (q) { $("q-" + q.id).hidden = !isStaff(); });
+    $("staffNote").hidden = !isStaff();
+    if (!isStaff()) P1B.forEach(function (q) { delete answers[q.id]; var c = document.querySelector('input[name="' + q.id + '"]:checked'); if (c) c.checked = false; });
+  }
+  function updateProgress() {
+    var ids = requiredIds();
+    var done = ids.filter(function (id) { return answers[id] !== undefined; }).length;
+    var pct = Math.round((done / ids.length) * 100);
+    $("progText").textContent = done + " / " + ids.length;
+    $("progPct").textContent = pct + "%";
+    $("progBar").style.width = pct + "%";
+  }
+  $("form").addEventListener("change", function (e) {
+    var t = e.target;
+    if (!t || t.type !== "radio") return;
+    answers[t.name] = t.name.charAt(0) === "s" && t.name.length === 3 ? parseInt(t.value, 10) : t.value;
+    var fs = $("q-" + t.name); if (fs) fs.classList.remove("missing");
+    if (t.name === "role") updateStaffVisibility();
+    updateProgress();
+  });
+  updateProgress();
+
+  // ---------- Language ----------
+  function setLang(l) {
+    uiLang = l;
+    document.documentElement.setAttribute("data-lang", l);
+    document.querySelectorAll(".seg button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-set") === l ? "true" : "false"); });
+    try { localStorage.setItem("bps-lang", l); } catch (e) {}
+  }
+  document.querySelectorAll(".seg button").forEach(function (b) { b.addEventListener("click", function () { setLang(b.getAttribute("data-set")); }); });
+  var saved = null; try { saved = localStorage.getItem("bps-lang"); } catch (e) {}
+  setLang(saved === "en" || saved === "si" ? saved : "both");
+
+  // ---------- Submit ----------
+  var CSV_COLS = ["submitted_at", "role", "age", "education", "years_at_port", "digital_literacy", "vessel_size", "ops_small", "ops_medium", "ops_large"];
+  function entryFromAnswers() {
+    var e = { submittedAt: new Date().toISOString(), role: answers.role, age: answers.age, edu: answers.edu, years: answers.years, digital: answers.digital, vessel: answers.vessel };
+    if (isStaff()) { e.ops_small = answers.ops_small; e.ops_medium = answers.ops_medium; e.ops_large = answers.ops_large; }
+    e.s = []; for (var i = 1; i <= S.length; i++) e.s.push(answers["s" + pad(i)]);
+    return e;
+  }
+  function csvCell(v) { v = v === undefined || v === null ? "" : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  function toCsv(entries) {
+    var head = CSV_COLS.slice(); for (var i = 1; i <= S.length; i++) head.push("S" + pad(i));
+    var rows = [head.join(",")];
+    entries.forEach(function (e) {
+      var r = [e.submittedAt, e.role, e.age, e.edu, e.years, e.digital, e.vessel, e.ops_small, e.ops_medium, e.ops_large];
+      for (var i = 0; i < S.length; i++) r.push((e.s || [])[i]);
+      rows.push(r.map(csvCell).join(","));
+    });
+    return "﻿" + rows.join("\n");
+  }
+  function showErr(html, extra) {
+    var el = $("err"); el.innerHTML = html; el.hidden = false;
+    if (extra) el.appendChild(extra);
+  }
+  function saveCopy(entries, name) {
+    var blob = new Blob([toCsv(entries)], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  function labelOf(id, v) {
+    if (v === undefined) return "";
+    var q = ALLP1.filter(function (x) { return x.id === id; })[0];
+    var o = q && q.opts.filter(function (o) { return o[0] === v; })[0];
+    return o ? o[1] : v;
+  }
+  $("form").addEventListener("submit", async function (ev) {
+    ev.preventDefault();
+    $("err").hidden = true;
+    var missing = requiredIds().filter(function (id) { return answers[id] === undefined; });
+    document.querySelectorAll("fieldset.q.missing").forEach(function (f) { f.classList.remove("missing"); });
+    if (missing.length) {
+      missing.forEach(function (id) { $("q-" + id).classList.add("missing"); });
+      showErr(bi("Please answer the highlighted questions (" + missing.length + " left).", "කරුණාකර උද්දීපනය කළ ප්‍රශ්නවලට පිළිතුරු දෙන්න (" + missing.length + " ඉතිරියි)."));
+      $("q-" + missing[0]).scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+      return;
+    }
+    var btn = $("submitBtn"); btn.disabled = true;
+    var entry = entryFromAnswers();
+    try {
+      if (!ENDPOINT || ENDPOINT.indexOf("PASTE_") === 0) throw new Error("not configured");
+      var payload = {
+        submittedAt: entry.submittedAt, lang: uiLang,
+        role: labelOf("role", entry.role), age: labelOf("age", entry.age), edu: labelOf("edu", entry.edu),
+        years: labelOf("years", entry.years), digital: labelOf("digital", entry.digital), vessel: labelOf("vessel", entry.vessel),
+        ops_small: labelOf("ops_small", entry.ops_small), ops_medium: labelOf("ops_medium", entry.ops_medium), ops_large: labelOf("ops_large", entry.ops_large),
+        s: entry.s
+      };
+      await fetch(ENDPOINT, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
+      $("form").hidden = true; $("done").hidden = false; window.scrollTo(0, 0);
+    } catch (e) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "linkbtn"; b.style.marginTop = "10px"; b.textContent = "Save my answers as a file";
+      b.onclick = function () { saveCopy([entry], "beruwala-port-response.csv"); };
+      showErr("Your answers could not be sent. Check your internet connection and try again. You can also save a copy of your answers as a file.", b);
+    }
+    btn.disabled = false;
+  });
+  $("again").addEventListener("click", function () {
+    answers = {};
+    document.querySelectorAll("#form input:checked").forEach(function (i) { i.checked = false; });
+    updateStaffVisibility(); updateProgress();
+    $("done").hidden = true; $("form").hidden = false; window.scrollTo(0, 0);
+  });
+
+})();
+</script>
+</body>
+</html>
